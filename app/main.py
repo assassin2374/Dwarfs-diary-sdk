@@ -1,8 +1,7 @@
 import io
 import os
 from PIL import Image
-from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, Request
 from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 
@@ -14,15 +13,11 @@ stability_api = client.StabilityInference(
 
 app = FastAPI()
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World!!"}
-
-@app.get("/dog_image")
-def generate_dog_image():
+@app.get("/{prompt}")
+def generate_dog_image(prompt:str):
     # テキストからの画像生成
     answers = stability_api.generate(
-        prompt="white dog",
+        prompt=prompt
     )
     # 結果の出力
     for resp in answers:
@@ -31,4 +26,4 @@ def generate_dog_image():
                 print("NSFW")
             if artifact.type == generation.ARTIFACT_IMAGE:
                 img = Image.open(io.BytesIO(artifact.binary))
-                img.save('output.png')
+                img.save(prompt+".png")
