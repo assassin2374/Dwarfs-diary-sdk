@@ -2,7 +2,7 @@ import io
 import os
 import uuid
 from PIL import Image
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 
