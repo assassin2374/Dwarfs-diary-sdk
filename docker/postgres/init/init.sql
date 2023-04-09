@@ -9,22 +9,6 @@ CREATE FUNCTION update_updated_at_column()
   END;
   $$ language 'plpgsql';
 
--- Master Tabel
--- shrine
-CREATE TABLE shrine (
-  id SERIAL NOT NULL,
-  name varchar(64) NOT NULL DEFAULT '',
-  created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
-  updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
-  PRIMARY KEY (id)
-);
-
--- マスターデータ
-INSERT INTO shrine (name) VALUES 
-('橿原神宮'), 
-('鶴岡八幡宮'), 
-('品川神社');
-
 -- users
 CREATE TABLE users (
   id SERIAL NOT NULL,
@@ -50,8 +34,38 @@ EXECUTE PROCEDURE update_updated_at_column();
 INSERT INTO users (name, email, password) VALUES 
 ('sam', 'sample01@example.com', 'sample01');
 
--- photos
-CREATE TABLE photos (
+-- diary
+CREATE TABLE diary (
+  id SERIAL NOT NULL,
+  user_id int NOT NULL DEFAULT 0,
+  image_id int NOT NULL DEFAULT 0,
+  prompt varchar(200) NOT NULL DEFAULT '',
+  comment varchar(200) NOT NULL DEFAULT '',
+  created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+  updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+  PRIMARY KEY (id),
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (image_id) REFERENCES images(id)
+);
+
+-- インデックス指定
+CREATE INDEX idx_user_id ON diary (user_id);
+
+-- 更新処理トリガー
+CREATE TRIGGER update_diary_modtime
+  BEFORE UPDATE
+  ON diary
+  FOR EACH ROW
+EXECUTE PROCEDURE update_updated_at_column();
+
+-- サンプル
+INSERT INTO diary (url, impression, user_id, shrine_id) VALUES 
+('sample1.com', '故郷', 1, 1), 
+('sample2.com', '感謝', 1, 2), 
+('sample3.com', '階段', 1, 3);
+
+-- images
+CREATE TABLE images (
   id SERIAL NOT NULL,
   user_id int NOT NULL DEFAULT 0,
   shrine_id int NOT NULL DEFAULT 0,
@@ -65,44 +79,18 @@ CREATE TABLE photos (
 );
 
 -- インデックス指定
-CREATE INDEX idx_user_id ON photos (user_id);
+CREATE INDEX idx_user_id ON images (user_id);
 
 -- 更新処理トリガー
-CREATE TRIGGER update_photos_modtime
+CREATE TRIGGER update_images_modtime
   BEFORE UPDATE
-  ON photos
+  ON images
   FOR EACH ROW
 EXECUTE PROCEDURE update_updated_at_column();
 
 -- サンプル
-INSERT INTO photos (url, impression, user_id, shrine_id) VALUES 
+INSERT INTO images (url, impression, user_id, shrine_id) VALUES 
 ('sample1.com', '故郷', 1, 1), 
 ('sample2.com', '感謝', 1, 2), 
 ('sample3.com', '階段', 1, 3);
 
--- emo
-CREATE TABLE emo (
-  id SERIAL NOT NULL,
-  user_id int NOT NULL DEFAULT 0,
-  photos_id int NOT NULL DEFAULT 0,
-  emo varchar(20) NOT NULL DEFAULT '',
-  created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
-  updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
-  PRIMARY KEY (id),
-  FOREIGN KEY (user_id) REFERENCES users(id),
-  FOREIGN KEY (photos_id) REFERENCES photos(id)
-);
-
--- インデックス指定
-CREATE INDEX idx_photos_id ON emo (photos_id);
-
--- 更新処理トリガー
-CREATE TRIGGER update_emo_modtime
-  BEFORE UPDATE
-  ON emo
-  FOR EACH ROW
-EXECUTE PROCEDURE update_updated_at_column();
-
--- サンプル
-INSERT INTO emo (emo, user_id, photos_id) VALUES 
-('a', 1, 1);
