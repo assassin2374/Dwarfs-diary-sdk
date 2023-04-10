@@ -34,6 +34,26 @@ EXECUTE PROCEDURE update_updated_at_column();
 INSERT INTO users (name, email, password) VALUES 
 ('sam', 'sample01@example.com', 'sample01');
 
+-- images
+CREATE TABLE images (
+  id SERIAL NOT NULL,
+  url varchar(200) NOT NULL DEFAULT '',
+  created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+  updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+  PRIMARY KEY (id)
+);
+
+-- 更新処理トリガー
+CREATE TRIGGER update_images_modtime
+  BEFORE UPDATE
+  ON images
+  FOR EACH ROW
+EXECUTE PROCEDURE update_updated_at_column();
+
+-- サンプル
+INSERT INTO images (url) VALUES 
+('https://example.com/image1.jpg');
+
 -- diary
 CREATE TABLE diary (
   id SERIAL NOT NULL,
@@ -59,38 +79,5 @@ CREATE TRIGGER update_diary_modtime
 EXECUTE PROCEDURE update_updated_at_column();
 
 -- サンプル
-INSERT INTO diary (url, impression, user_id, shrine_id) VALUES 
-('sample1.com', '故郷', 1, 1), 
-('sample2.com', '感謝', 1, 2), 
-('sample3.com', '階段', 1, 3);
-
--- images
-CREATE TABLE images (
-  id SERIAL NOT NULL,
-  user_id int NOT NULL DEFAULT 0,
-  shrine_id int NOT NULL DEFAULT 0,
-  url varchar(200) NOT NULL DEFAULT '',
-  impression varchar(200) NOT NULL DEFAULT '',
-  created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
-  updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
-  PRIMARY KEY (id),
-  FOREIGN KEY (user_id) REFERENCES users(id),
-  FOREIGN KEY (shrine_id) REFERENCES shrine(id)
-);
-
--- インデックス指定
-CREATE INDEX idx_user_id ON images (user_id);
-
--- 更新処理トリガー
-CREATE TRIGGER update_images_modtime
-  BEFORE UPDATE
-  ON images
-  FOR EACH ROW
-EXECUTE PROCEDURE update_updated_at_column();
-
--- サンプル
-INSERT INTO images (url, impression, user_id, shrine_id) VALUES 
-('sample1.com', '故郷', 1, 1), 
-('sample2.com', '感謝', 1, 2), 
-('sample3.com', '階段', 1, 3);
-
+INSERT INTO diary (user_id, image_id, prompt, comment) VALUES
+(1, 1, '映画 友達 スラムダンク', '友達と映画を見に行った。');
