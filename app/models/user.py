@@ -1,4 +1,5 @@
-
+from sqlalchemy import Column, Integer, String
+from ..application import Base
 
 # Userクラス定義
 class User(Base):
@@ -11,11 +12,3 @@ class User(Base):
 
     def __repr__(self):
         return f"<User(id={self.id}, name='{self.name}', email='{self.email}', password='{self.password}')>"
-
-# Userクラスの依存性注入
-def get_db():
-    try:
-        db = SessionLocal()
-        yield db
-    finally:
-        db.close()

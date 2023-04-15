@@ -5,9 +5,8 @@ from PIL import Image
 from fastapi import FastAPI, Depends
 from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
-
-from sqlalchemy import Column, Integer, String
-from .application import Base, SessionLocal
+from .application import SessionLocal
+from models.user import User
 
 # Stability APIの呼び出しのためのクライアントオブジェクトを作成する
 stability_api = client.StabilityInference(
@@ -17,18 +16,6 @@ stability_api = client.StabilityInference(
 
 # FastAPIのアプリケーションオブジェクトを作成する
 app = FastAPI()
-
-# Userクラス定義
-class User(Base):
-    __tablename__ = "users"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
-    email = Column(String, unique=True, index=True)
-    password = Column(String)
-
-    def __repr__(self):
-        return f"<User(id={self.id}, name='{self.name}', email='{self.email}', password='{self.password}')>"
 
 # Userクラスの依存性注入
 def get_db():
