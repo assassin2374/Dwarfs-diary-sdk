@@ -30,6 +30,11 @@ def get_all_users(db: SessionLocal = Depends(get_db)):
     users = db.query(User).all()
     return {"users": users}
 
+@app.delete("/api/user{id}")
+def get_all_users(db: SessionLocal = Depends(get_db)):
+    users = db.query(User).all()
+    return {"users": users}
+
 # APIエンドポイントを定義する
 @app.get("/prompt={prompt}")
 def generate_image(prompt:str):
