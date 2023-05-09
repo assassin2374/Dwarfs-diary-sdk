@@ -6,6 +6,8 @@ from fastapi import FastAPI, Depends, HTTPException
 from .application import SessionLocal
 from typing import List
 from . import models, schemas
+from app.routers import user
+
 # stable_diffusion_sdk
 from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
@@ -26,6 +28,8 @@ def get_db():
         yield db
     finally:
         db.close()
+
+app.include_router(user.router)
 
 # 全ユーザー取得API
 @app.get("/api/users", response_model=List[schemas.User])

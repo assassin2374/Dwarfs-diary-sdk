@@ -2,21 +2,22 @@ from fastapi import APIRouter
 
 router = APIRouter()
 
-@router.get("/tasks")
-async def list_tasks():
+@router.get("/users")
+async def list_users():
     pass
 
-
-@router.post("/tasks")
-async def create_task():
+@router.get("/users/{user_id}")
+async def get_user():
     pass
 
-
-@router.put("/tasks/{task_id}")
-async def update_task():
+@router.post("/users")
+async def create_users():
     pass
 
+@router.put("/users/{user_id}")
+async def update_users():
+    pass
 
-@router.delete("/tasks/{task_id}")
-async def delete_task():
+@router.delete("/users/{task_id}")
+async def delete_users():
     pass
