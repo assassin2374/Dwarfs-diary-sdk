@@ -3,7 +3,7 @@ import os
 import uuid
 from PIL import Image
 from fastapi import FastAPI, Depends, HTTPException
-from .application import SessionLocal
+from .db import SessionLocal
 from typing import List
 from . import models, schemas
 from app.routers import user
