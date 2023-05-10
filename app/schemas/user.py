@@ -14,6 +14,11 @@ class UserCreate(UserBase):
 class UserUpdate(UserBase):
     password: Optional[str]
 
+class UserCreateResponse(UserCreate):
+    id: int
+
+    class Config:
+        orm_mode = True
 
 class User(UserBase):
     id: int
