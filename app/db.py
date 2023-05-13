@@ -13,3 +13,7 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
+
+async def get_db():
+    async with SessionLocal() as session:
+        yield session
