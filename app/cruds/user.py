@@ -13,6 +13,8 @@ async def read_users(db: AsyncSession) -> List[Tuple[int, str, bool]]:
             select(
                 user_model.User.id,
                 user_model.User.name,
+                user_model.User.email,
+                user_model.User.password,
             )
         )
     )
